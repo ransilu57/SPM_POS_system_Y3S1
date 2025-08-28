@@ -36,27 +36,41 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <p className="text-bold underline">Admin Login</p>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p className="error">{error}</p>}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-yellow-50 px-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8 border-2 border-yellow-200">
+        <h1 className="text-2xl font-bold underline text-center text-yellow-800 mb-8">
+          Admin Login
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="w-full px-4 py-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition-colors bg-yellow-50"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full px-4 py-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition-colors bg-yellow-50"
+          />
+          <button
+            type="submit"
+            className="w-full bg-yellow-500 text-white py-3 px-4 rounded-lg hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-colors font-medium shadow-md"
+          >
+            Login
+          </button>
+        </form>
+        {error && (
+          <p className="mt-4 text-yellow-800 text-center bg-yellow-100 border border-yellow-300 rounded-lg p-3">
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 };
