@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const MONGO_URI = 'mongodb://localhost:27017/pos_system'; // Replace with your actual MongoDB URI if needed
+const MONGO_URI = process.env.MONGODB_URI;
 mongoose.connect(MONGO_URI)
 	.then(() => console.log('MongoDB connected'))
 	.catch(err => console.error('MongoDB connection error:', err));
