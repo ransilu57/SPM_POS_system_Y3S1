@@ -39,7 +39,7 @@ const Login = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-yellow-50 px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8 border-2 border-yellow-200">
         <h1 className="text-2xl font-bold underline text-center text-yellow-800 mb-8">
-          Admin Login
+          Login
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <input
