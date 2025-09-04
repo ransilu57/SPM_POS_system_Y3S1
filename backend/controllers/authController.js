@@ -30,3 +30,7 @@ export async function register(req, res) {
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
 }
+
+export async function logout(req, res) {
+    res.json({ message: 'Logout successful' });
+}

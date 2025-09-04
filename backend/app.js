@@ -12,17 +12,20 @@ import express from 'express';
 import authRoutes from './routes/auth.js';
 import dashboardRoutes from './routes/dashboard.js';
 import productsRoutes from './routes/products.js';
+import cashierRoutes from './routes/cashiers.js';
 
 const app = express();
 app.use(cors({
 	origin: 'http://localhost:5173',
 	credentials: true
 }));
+
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/products', productsRoutes);
+app.use('/api/cashiers', cashierRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

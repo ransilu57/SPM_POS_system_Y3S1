@@ -10,13 +10,11 @@ const users = [
   {
     username: 'admin',
     password: 'adminpass',
-    email: 'admin@example.com',
     role: 'admin'
   },
   {
-    username: 'cashier',
+    username: 'cashier1',
     password: 'cashierpass',
-    email: 'cashier@example.com',
     role: 'cashier'
   }
 ];
