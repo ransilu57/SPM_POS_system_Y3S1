@@ -74,7 +74,7 @@ const ProductList = () => {
                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                             <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th className="py-3 px-6 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                            <th className="py-3 px-6 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price (LKR)</th>
                             <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -97,7 +97,7 @@ const ProductList = () => {
                                 <td className="py-4 px-6 whitespace-nowrap">{product.name}</td>
                                 <td className="py-4 px-6">{product.description}</td>
                                 <td className="py-4 px-6 text-center">{product.quantity}</td>
-                                <td className="py-4 px-6 text-right">${product.unitPrice.toFixed(2)}</td>
+                                <td className="py-4 px-6 text-right">{product.unitPrice.toFixed(2)}</td>
                                 <td className="py-4 px-6 text-center">
                                     <button 
                                         onClick={() => handleEdit(product._id)}
