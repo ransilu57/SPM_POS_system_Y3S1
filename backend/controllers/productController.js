@@ -83,6 +83,29 @@ export async function getProducts(req, res) {
     }
 }
 
+// Get a single product by ID
+export async function getProductById(req, res) {
+    try {
+        const { id } = req.params;
+        const productFromDB = await Product.findById(id);
+
+        if (!productFromDB) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // Also convert image to base64 for consistency
+        const product = productFromDB.toObject();
+        if (product.image && product.image.data) {
+            product.image = `data:${product.image.contentType};base64,${product.image.data.toString('base64')}`;
+        }
+
+        res.json({ message: "Product fetched successfully", product });
+    } catch (err) {
+        console.error("Error fetching product:", err);
+        res.status(500).json({ message: "Error fetching product", error: err.message });
+    }
+}
+
 // Update a product
 export async function updateProduct(req, res) {
     upload(req, res, async (err) => {
@@ -91,19 +114,27 @@ export async function updateProduct(req, res) {
         }
         try {
             const { id } = req.params;
-            const { name, description, unitPrice } = req.body;
+            const { name, description } = req.body;
+            const unitPrice = parseFloat(req.body.unitPrice);
+            const quantity = parseInt(req.body.quantity, 10);
 
             // Basic input validation
-            if (!name || !description || typeof unitPrice !== "number") {
-                return res.status(400).json({ message: "Invalid input: name, description, and unitPrice are required" });
+            if (!name || !description || isNaN(unitPrice) || isNaN(quantity)) {
+                return res.status(400).json({ message: "Invalid input: name, description, unitPrice, and quantity are required" });
             }
-            const image = req.file ? { data: req.file.buffer, contentType: req.file.mimetype } : undefined;
+
+            const updateData = { name, description, unitPrice, quantity };
+
+            if (req.file) {
+                updateData.image = { data: req.file.buffer, contentType: req.file.mimetype };
+            }
 
             const product = await Product.findByIdAndUpdate(
                 id,
-                { name, description, unitPrice, ...(image && { image }) },
+                updateData,
                 { new: true, runValidators: true }
             );
+
             if (!product) {
                 return res.status(404).json({ message: "Product not found" });
             }
