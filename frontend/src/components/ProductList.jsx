@@ -1,33 +1,64 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch('http://localhost:5000/api/products', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to fetch products');
+            }
+            const data = await response.json();
+            setProducts(data.products);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEdit = (productId) => {
+        navigate(`/admin/editproduct/${productId}`);
+    };
+
+    const handleDelete = async (productId) => {
+        if (window.confirm('Are you sure you want to delete this product?')) {
             try {
-                const response = await fetch('http://localhost:5000/api/products', {
+                const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+                    method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
+
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to fetch products');
+                    throw new Error(errorData.message || 'Failed to delete product');
                 }
-                const data = await response.json();
-                setProducts(data.products);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
 
-        fetchProducts();
-    }, []);
+                // Refresh the product list to show the deletion
+                fetchProducts();
+            } catch (err) {
+                setError(err.message); // Show error to the user
+                alert(`Error: ${err.message}`);
+            }
+        }
+    };
 
     if (loading) return <p className="text-center mt-8">Loading products...</p>;
     if (error) return <p className="text-center mt-8 text-red-500">Error: {error}</p>;
@@ -44,6 +75,7 @@ const ProductList = () => {
                             <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                             <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                             <th className="py-3 px-6 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -66,10 +98,24 @@ const ProductList = () => {
                                 <td className="py-4 px-6">{product.description}</td>
                                 <td className="py-4 px-6 text-center">{product.quantity}</td>
                                 <td className="py-4 px-6 text-right">${product.unitPrice.toFixed(2)}</td>
+                                <td className="py-4 px-6 text-center">
+                                    <button 
+                                        onClick={() => handleEdit(product._id)}
+                                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs mr-2 transition duration-200"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button 
+                                        onClick={() => handleDelete(product._id)}
+                                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs transition duration-200"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan="5" className="text-center py-4">No products found.</td>
+                                <td colSpan="6" className="text-center py-4">No products found.</td>
                             </tr>
                         )}
                     </tbody>
