@@ -21,10 +21,12 @@ export async function addProduct(req, res) {
             return res.status(400).json({ message: "Error uploading image", error: err.message });
         }
         try {
-            const { name, description, unitPrice, quantity } = req.body;
+            const { name, description } = req.body;
+            const unitPrice = parseFloat(req.body.unitPrice);
+            const quantity = parseInt(req.body.quantity, 10);
 
             // Basic input validation
-            if (!name || !description || typeof unitPrice !== "number" || typeof quantity !== "number") {
+            if (!name || !description || isNaN(unitPrice) || isNaN(quantity)) {
                 return res.status(400).json({ message: "Invalid input: name, description, unitPrice, and quantity are required" });
             }
 
