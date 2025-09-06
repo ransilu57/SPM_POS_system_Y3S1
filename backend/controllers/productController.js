@@ -56,10 +56,19 @@ export async function getProducts(req, res) {
             return res.status(400).json({ message: "Invalid page or limit parameters" });
         }
 
-        const products = await Product.find()
+        const productsFromDB = await Product.find()
             .skip(skip)
             .limit(Number(limit));
         const total = await Product.countDocuments();
+
+        // Transform products to include a base64 image string for easier frontend rendering
+        const products = productsFromDB.map(p => {
+            const product = p.toObject(); // Convert Mongoose doc to plain object
+            if (product.image && product.image.data) {
+                product.image = `data:${product.image.contentType};base64,${product.image.data.toString('base64')}`;
+            }
+            return product;
+        });
 
         res.json({
             message: "Products fetched successfully",

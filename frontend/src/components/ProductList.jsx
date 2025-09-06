@@ -14,7 +14,8 @@ const ProductList = () => {
                     }
                 });
                 if (!response.ok) {
-                    throw new Error('Failed to fetch products');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to fetch products');
                 }
                 const data = await response.json();
                 setProducts(data.products);
@@ -30,13 +31,6 @@ const ProductList = () => {
 
     if (loading) return <p className="text-center mt-8">Loading products...</p>;
     if (error) return <p className="text-center mt-8 text-red-500">Error: {error}</p>;
-
-    // Helper to convert buffer to base64
-    const bufferToBase64 = (buffer) => {
-        if (!buffer || !buffer.data) return '';
-        const binary = String.fromCharCode.apply(null, new Uint8Array(buffer.data));
-        return btoa(binary);
-    };
 
     return (
         <div className="container mx-auto mt-8">
@@ -56,9 +50,9 @@ const ProductList = () => {
                         {products.length > 0 ? products.map((product) => (
                             <tr key={product._id} className="hover:bg-gray-50">
                                 <td className="py-4 px-6">
-                                    {product.image && product.image.data ? (
+                                    {product.image ? (
                                         <img
-                                            src={`data:${product.image.contentType};base64,${bufferToBase64(product.image.data)}`}
+                                            src={product.image} // Directly use the base64 string from the backend
                                             alt={product.name}
                                             className="h-16 w-16 object-cover rounded"
                                         />
