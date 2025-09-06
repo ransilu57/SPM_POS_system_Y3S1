@@ -20,7 +20,6 @@ function AddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Create a FormData object to handle multipart/form-data for the image
     const productData = new FormData();
     productData.append("name", formData.name);
     productData.append("description", formData.description);
@@ -31,31 +30,23 @@ function AddProduct() {
     }
 
     try {
-      // Replace with your actual API endpoint
       const response = await fetch("http://localhost:5000/api/products", {
         method: "POST",
         headers: {
-          // 'Content-Type' is not needed; the browser will set it for FormData
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: productData,
       });
 
       if (response.ok) {
-        console.log("Product added successfully");
-        // Optionally reset form or navigate away
-        setFormData({
-          name: "",
-          description: "",
-          quantity: 0,
-          unitPrice: 0,
-          image: null,
-        });
+        alert("Product added successfully!");
+        navigate("/admin");
       } else {
-        console.error("Failed to add product");
+        const errorData = await response.json();
+        alert(`Failed to add product: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      alert(`Error submitting form: ${error.message}`);
     }
   };
 
