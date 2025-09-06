@@ -13,7 +13,7 @@ const Login = () => {
 
     if (token && role) {
       if (role === "admin") {
-        navigate("/admin-dashboard");
+        navigate("/admin");
       } else if (role === "cashier") {
         navigate("/cashier");
       }
@@ -24,7 +24,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:3000/api/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -34,7 +34,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         if (data.role === "admin") {
-          navigate("/admin-dashboard");
+          navigate("/admin");
         } else if (data.role === "cashier") {
           navigate("/cashier");
         } else {
@@ -50,9 +50,13 @@ const Login = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-yellow-50 px-4">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-yellow-900">A Point of Sale System for Supermarkets</h1>
+        <p className="text-lg text-yellow-700 mt-2">Streamlining your sales, one transaction at a time.</p>
+      </div>
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8 border-2 border-yellow-200">
         <h1 className="text-2xl font-bold underline text-center text-yellow-800 mb-8">
-          Admin Login
+          Login
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <input

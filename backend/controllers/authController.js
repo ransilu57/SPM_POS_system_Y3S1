@@ -2,6 +2,9 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 
+// In-memory blacklist for tokens
+export const tokenBlacklist = new Set();
+
 export async function login(req, res) {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
@@ -12,7 +15,8 @@ export async function login(req, res) {
     if (!isMatch) {
         return res.status(401).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ username: user.username, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ username: user.username, role: user.role }, process.env.JWT_SECRET , { expiresIn: '1h' });
+    console.log(process.env.JWT_SECRET);
     res.json({ token, role: user.role });
 }
 
@@ -32,5 +36,12 @@ export async function register(req, res) {
 }
 
 export async function logout(req, res) {
-    res.json({ message: 'Logout successful' });
+    const authHeader = req.headers['authorization'];
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+        if (token) {
+            tokenBlacklist.add(token);
+        }
+    }
+    res.status(200).json({ message: 'Logout successful' });
 }
