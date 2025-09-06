@@ -16,6 +16,10 @@ const productSchema = new mongoose.Schema({
         required: [true, "Unit price is required"], 
         min: [0.01, "Unit price must be positive"] 
     },
+    quantity: { 
+        type: Number, 
+        required: [true, "Quantity is required"],  
+    },
     image: {
         data: { type: Buffer },
         contentType: { type: String }

@@ -21,16 +21,16 @@ export async function addProduct(req, res) {
             return res.status(400).json({ message: "Error uploading image", error: err.message });
         }
         try {
-            const { name, description, unitPrice } = req.body;
+            const { name, description, unitPrice, quantity } = req.body;
 
             // Basic input validation
-            if (!name || !description || typeof unitPrice !== "number") {
-                return res.status(400).json({ message: "Invalid input: name, description, and unitPrice are required" });
+            if (!name || !description || typeof unitPrice !== "number" || typeof quantity !== "number") {
+                return res.status(400).json({ message: "Invalid input: name, description, unitPrice, and quantity are required" });
             }
 
             const image = req.file ? { data: req.file.buffer, contentType: req.file.mimetype } : null;
 
-            const product = new Product({ name, description, unitPrice, image });
+            const product = new Product({ name, description, unitPrice, quantity, image });
             await product.save();
             res.status(201).json({ message: "Product added", product });
         } catch (err) {
