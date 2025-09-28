@@ -7,6 +7,7 @@ import CashierDashboard from './pages/CashierDashboard';
 import AddProduct from './components/AddProduct';
 import EditProduct from './pages/EditProduct'; // Import the new EditProduct page
 import ManageCashiers from './pages/ManageCashiers'; // Import the new ManageCashiers page
+import CheckoutPage from './pages/CheckoutPage'; // Import the new CheckoutPage
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
       {/* Add the new route for managing cashiers */}
       <Route path="/admin/manage-cashiers" element={<ManageCashiers />} />
       <Route path="/cashier" element={<CashierDashboard />} />
+      {/* Add the new route for checkout */}
+      <Route path="/cashier/checkout" element={<CheckoutPage />} />
 
     </Routes>
   );
