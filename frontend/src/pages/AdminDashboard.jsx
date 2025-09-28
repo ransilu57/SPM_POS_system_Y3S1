@@ -45,6 +45,7 @@ const AdminDashboard = () => {
         </div>
       </div>
     </div>
+    //add product list component here
   );
 };
 
