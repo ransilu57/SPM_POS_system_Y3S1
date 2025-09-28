@@ -14,8 +14,7 @@ A comprehensive Point of Sale system designed for supermarkets. This application
 ## Technologies Used
 
 *   **Frontend:**
-    *   React
-    *   Vite
+    *   ReactJs (Vite)
     *   React Router
     *   Tailwind CSS
 *   **Backend:**
