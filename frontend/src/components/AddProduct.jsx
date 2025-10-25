@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function AddProduct() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -40,6 +42,14 @@ function AddProduct() {
 
       if (response.ok) {
         alert("Product added successfully!");
+        // Reset form
+        setFormData({
+          name: "",
+          description: "",
+          quantity: 0,
+          unitPrice: 0,
+          image: null,
+        });
         navigate("/admin");
       } else {
         const errorData = await response.json();

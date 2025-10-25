@@ -9,6 +9,7 @@ const ManageCashiers = () => {
   const [editingCashier, setEditingCashier] = useState(null);
   const [formData, setFormData] = useState({
     username: '',
+    email: '',
     password: ''
   });
 
@@ -50,13 +51,16 @@ const ManageCashiers = () => {
   const handleAddCashier = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/cashiers', {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          role: 'cashier'
+        })
       });
 
       if (!response.ok) {
@@ -67,7 +71,7 @@ const ManageCashiers = () => {
       const result = await response.json();
       alert(result.message);
       setShowAddForm(false);
-      setFormData({ username: '', password: '' });
+      setFormData({ username: '', email: '', password: '' });
       fetchCashiers(); // Refresh the list
     } catch (err) {
       alert(`Error: ${err.message}`);
@@ -129,6 +133,7 @@ const ManageCashiers = () => {
     setEditingCashier(cashier);
     setFormData({
       username: cashier.username,
+      email: cashier.email || '',
       password: '' // Don't pre-fill password for security
     });
     setShowAddForm(false);
@@ -136,12 +141,12 @@ const ManageCashiers = () => {
 
   const cancelEdit = () => {
     setEditingCashier(null);
-    setFormData({ username: '', password: '' });
+    setFormData({ username: '', email: '', password: '' });
   };
 
   const cancelAdd = () => {
     setShowAddForm(false);
-    setFormData({ username: '', password: '' });
+    setFormData({ username: '', email: '', password: '' });
   };
 
   if (loading) return <p className="text-center mt-8">Loading cashiers...</p>;
@@ -197,7 +202,20 @@ const ManageCashiers = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Password (min 6 characters)
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Password (min 8 characters, uppercase, lowercase, number)
                   </label>
                   <input
                     type="password"
@@ -205,7 +223,7 @@ const ManageCashiers = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    minLength="6"
+                    minLength="8"
                     required
                   />
                 </div>
@@ -250,6 +268,19 @@ const ManageCashiers = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     New Password (leave empty to keep current)
                   </label>
                   <input
@@ -258,7 +289,7 @@ const ManageCashiers = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    minLength="6"
+                    minLength="8"
                     placeholder="Enter new password or leave empty"
                   />
                 </div>
@@ -296,6 +327,9 @@ const ManageCashiers = () => {
                       Username
                     </th>
                     <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Role
                     </th>
                     <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -311,6 +345,9 @@ const ManageCashiers = () => {
                     <tr key={cashier._id} className="hover:bg-gray-50">
                       <td className="py-4 px-6 whitespace-nowrap font-medium text-gray-900">
                         {cashier.username}
+                      </td>
+                      <td className="py-4 px-6 whitespace-nowrap text-gray-700">
+                        {cashier.email || 'N/A'}
                       </td>
                       <td className="py-4 px-6 whitespace-nowrap">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
