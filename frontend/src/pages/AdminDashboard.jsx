@@ -25,6 +25,12 @@ const AdminDashboard = () => {
               Manage Cashiers
             </Link>
             <Link
+              to="/admin/manage-categories"
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            >
+              Manage Categories
+            </Link>
+            <Link
               to="/admin/addproduct"
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
             >

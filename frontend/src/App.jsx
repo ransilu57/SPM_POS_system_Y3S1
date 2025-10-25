@@ -9,6 +9,7 @@ import CashierDashboard from './pages/CashierDashboard';
 import AddProduct from './components/AddProduct';
 import EditProduct from './pages/EditProduct';
 import ManageCashiers from './pages/ManageCashiers';
+import ManageCategories from './pages/ManageCategories';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -54,6 +55,14 @@ function App() {
         element={
           <ProtectedRoute requiredRole="admin">
             <ManageCashiers />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/manage-categories" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <ManageCategories />
           </ProtectedRoute>
         } 
       />
