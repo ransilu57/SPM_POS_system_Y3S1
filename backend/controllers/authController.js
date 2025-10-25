@@ -16,7 +16,8 @@ export async function login(req, res) {
         }
 
         // For other users (cashiers), check database
-        const user = await User.findOne({ username, isActive: true });
+        // IMPORTANT: Must use .select('+password') because password has select: false in schema
+        const user = await User.findOne({ username, isActive: true }).select('+password');
         
         if (!user) {
             console.log('User not found:', username);

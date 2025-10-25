@@ -5,6 +5,7 @@ const ManageCashiers = () => {
   const [cashiers, setCashiers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formError, setFormError] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCashier, setEditingCashier] = useState(null);
   const [formData, setFormData] = useState({
@@ -50,6 +51,8 @@ const ManageCashiers = () => {
 
   const handleAddCashier = async (e) => {
     e.preventDefault();
+    setFormError(null); // Clear previous errors
+    
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
@@ -74,6 +77,8 @@ const ManageCashiers = () => {
       setFormData({ username: '', email: '', password: '' });
       fetchCashiers(); // Refresh the list
     } catch (err) {
+      setFormError(err.message);
+      // Also show alert for immediate visibility
       alert(`Error: ${err.message}`);
     }
   };
@@ -147,6 +152,7 @@ const ManageCashiers = () => {
   const cancelAdd = () => {
     setShowAddForm(false);
     setFormData({ username: '', email: '', password: '' });
+    setFormError(null); // Clear errors when canceling
   };
 
   if (loading) return <p className="text-center mt-8">Loading cashiers...</p>;
@@ -185,6 +191,46 @@ const ManageCashiers = () => {
         {showAddForm && (
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <h2 className="text-xl font-bold mb-4">Add New Cashier</h2>
+            
+            {/* Form Error Display */}
+            {formError && (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-red-800">{formError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Password Requirements Notice */}
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-blue-800">Password Requirements</h3>
+                  <div className="mt-2 text-sm text-blue-700">
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>At least 8 characters long</li>
+                      <li>Contains at least one uppercase letter (A-Z)</li>
+                      <li>Contains at least one lowercase letter (a-z)</li>
+                      <li>Contains at least one number (0-9)</li>
+                      <li>Example: <span className="font-mono bg-blue-100 px-1 rounded">Cashier123</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <form onSubmit={handleAddCashier} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -213,9 +259,9 @@ const ManageCashiers = () => {
                     required
                   />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Password (min 8 characters, uppercase, lowercase, number)
+                    Password
                   </label>
                   <input
                     type="password"
@@ -224,6 +270,7 @@ const ManageCashiers = () => {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     minLength="8"
+                    placeholder="e.g., Cashier123"
                     required
                   />
                 </div>
