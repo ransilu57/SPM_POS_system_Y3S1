@@ -13,20 +13,32 @@ const CashierDashboard = () => {
   }, []);
 
   const fetchProducts = async () => {
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/api/products", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setProducts(data.products || data); // support both {products:[]} and [] response
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5000/api/products", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (!res.ok) {
+        console.error("Failed to fetch products:", res.status);
+        setMessage("Failed to load products. Please try logging in again.");
+        return;
+      }
+      
+      const data = await res.json();
+      setProducts(data.products || []); // Ensure it's always an array
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setMessage("Error loading products.");
+    }
   };
 
   const addToCart = (product) => {
     setCart((prev) => {
-      const found = prev.find((item) => item.productId === product.productId);
+      const found = prev.find((item) => item._id === product._id);
       if (found) {
         return prev.map((item) =>
-          item.productId === product.productId
+          item._id === product._id
             ? { ...item, qty: item.qty + 1 }
             : item
         );
@@ -36,11 +48,11 @@ const CashierDashboard = () => {
   };
 
   const removeFromCart = (productId) => {
-    setCart((prev) => prev.filter((item) => item.productId !== productId));
+    setCart((prev) => prev.filter((item) => item._id !== productId));
   };
 
   const getTotal = () =>
-    cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    cart.reduce((sum, item) => sum + item.unitPrice * item.qty, 0).toFixed(2);
 
   const handleCheckout = () => {
     setMessage("Sale completed! (Simulation)");
@@ -76,13 +88,13 @@ const CashierDashboard = () => {
               <ul>
                 {products.map((product) => (
                   <li
-                    key={product.productId || product._id}
+                    key={product._id}
                     className="flex justify-between items-center border-b py-2"
                   >
                     <div>
                       <span className="font-medium">{product.name}</span>
                       <span className="ml-2 text-gray-500">
-                        (${product.price})
+                        (${product.unitPrice})
                       </span>
                     </div>
                     <button
@@ -107,17 +119,17 @@ const CashierDashboard = () => {
               <ul>
                 {cart.map((item) => (
                   <li
-                    key={item.productId || item._id}
+                    key={item._id}
                     className="flex justify-between items-center border-b py-2"
                   >
                     <div>
                       <span className="font-medium">{item.name}</span>
                       <span className="ml-2 text-gray-500">
-                        x{item.qty} (${item.price * item.qty})
+                        x{item.qty} (${(item.unitPrice * item.qty).toFixed(2)})
                       </span>
                     </div>
                     <button
-                      onClick={() => removeFromCart(item.productId || item._id)}
+                      onClick={() => removeFromCart(item._id)}
                       className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500"
                     >
                       Remove

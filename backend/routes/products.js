@@ -1,16 +1,17 @@
 import express from 'express';
-import authMiddleware from '../middleware/authMiddleware.js';
+import authMiddleware, { adminOnly } from '../middleware/authMiddleware.js';
 import { addProduct, getProducts, getProductById, updateProduct, deleteProduct } from '../controllers/productController.js';
 
 const router = express.Router();
 
-// All routes are protected
-router.use(authMiddleware);
+// Routes accessible by both admin and cashier (read-only for cashier)
+router.get('/', authMiddleware, getProducts); // List products - both roles
+router.get('/:id', authMiddleware, getProductById); // Get single product - both roles
 
-router.post('/', addProduct); // Add product
-router.get('/', getProducts); // List products
-router.get('/:id', getProductById); // Get single product by ID
-router.put('/:id', updateProduct); // Update product by productId
-router.delete('/:id', deleteProduct); // Delete product by productId
+// Admin-only routes (create, update, delete)
+router.post('/', authMiddleware, adminOnly, addProduct); // Add product - admin only
+router.put('/:id', authMiddleware, adminOnly, updateProduct); // Update product - admin only
+router.delete('/:id', authMiddleware, adminOnly, deleteProduct); // Delete product - admin only
 
 export default router;
+
