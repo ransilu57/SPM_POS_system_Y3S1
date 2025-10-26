@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { tokenBlacklist } from '../controllers/authController.js';
+import User from '../models/User.js';
 
 // Basic authentication middleware - checks if user has valid token
-export default function authMiddleware(req, res, next) {
+export default async function authMiddleware(req, res, next) {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
         return res.status(401).json({ message: 'No token provided' });
@@ -17,13 +18,31 @@ export default function authMiddleware(req, res, next) {
         return res.status(403).json({ message: 'Token has been invalidated. Please log in again.' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ message: 'Invalid token' });
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // For admin (hardcoded), create a mock user object
+        if (decoded.username === 'admin') {
+            req.user = {
+                _id: 'admin',
+                username: 'admin',
+                role: 'admin'
+            };
+            return next();
         }
+        
+        // For database users (cashiers), fetch full user object
+        const user = await User.findOne({ username: decoded.username, isActive: true });
+        
+        if (!user) {
+            return res.status(401).json({ message: 'User not found or inactive' });
+        }
+        
         req.user = user;
         next();
-    });
+    } catch (err) {
+        return res.status(403).json({ message: 'Invalid token' });
+    }
 }
 
 // Admin-only middleware - use AFTER authMiddleware

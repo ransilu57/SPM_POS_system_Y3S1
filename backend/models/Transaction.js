@@ -41,15 +41,52 @@ const transactionSchema = new mongoose.Schema({
       min: [0, 'Subtotal cannot be negative']
     }
   }],
+  subtotal: {
+    type: Number,
+    required: true,
+    min: [0, 'Subtotal cannot be negative']
+  },
+  discount: {
+    type: Number,
+    default: 0,
+    min: [0, 'Discount cannot be negative']
+  },
+  tax: {
+    type: Number,
+    default: 0,
+    min: [0, 'Tax cannot be negative']
+  },
   total: {
     type: Number,
     required: [true, 'Total amount is required'],
     min: [0, 'Total cannot be negative']
   },
+  paymentMethods: [{
+    method: {
+      type: String,
+      enum: ['cash', 'card', 'mobile', 'voucher', 'other'],
+      required: true
+    },
+    amount: {
+      type: Number,
+      required: true,
+      min: [0, 'Amount cannot be negative']
+    }
+  }],
+  // Legacy field for backwards compatibility
   paymentMethod: {
     type: String,
-    enum: ['cash', 'card', 'mobile', 'other'],
-    required: [true, 'Payment method is required']
+    enum: ['cash', 'card', 'mobile', 'voucher', 'other']
+  },
+  amountPaid: {
+    type: Number,
+    required: true,
+    min: [0, 'Amount paid cannot be negative']
+  },
+  change: {
+    type: Number,
+    default: 0,
+    min: [0, 'Change cannot be negative']
   },
   status: {
     type: String,

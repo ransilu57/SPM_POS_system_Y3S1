@@ -14,6 +14,9 @@ import authRoutes from "./routes/auth.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import productsRoutes from "./routes/products.js";
 import cashierRoutes from "./routes/cashiers.js";
+import transactionRoutes from "./routes/transactions.js";
+import categoryRoutes from "./routes/categories.js";
+import reportRoutes from "./routes/reports.js";
 
 const app = express();
 app.use(
@@ -29,6 +32,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/products", productsRoutes);
 app.use("/api/cashiers", cashierRoutes);
+app.use("/api/transactions", transactionRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/reports", reportRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
